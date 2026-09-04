@@ -713,6 +713,322 @@
         #toast.info {
             border-left: 4px solid var(--primary);
         }
+
+        /* ─── Present Button on Pool Image Cards ─── */
+        .present-image-btn {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 25;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+            transition: background-color 0.15s, transform 0.15s;
+        }
+
+        .present-image-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        /* ─── Guest Waiting Banner ─── */
+        .guest-waiting-card {
+            background-color: var(--bg-surface);
+            border: 1px dashed var(--border-subtle);
+            border-radius: 8px;
+            padding: 48px 24px;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .guest-waiting-card .waiting-icon {
+            font-size: 38px;
+            margin-bottom: 12px;
+            display: inline-block;
+            animation: pulse-slow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+
+        .guest-waiting-card .waiting-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .guest-waiting-card .waiting-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* ─── Voting Overlay & Card ─── */
+        .voting-modal-card {
+            max-width: 640px;
+            padding: 24px;
+        }
+
+        .voting-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .voting-badge {
+            background-color: var(--danger);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .voting-voter-count {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            background-color: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+
+        .voting-image-frame {
+            background-color: #000000;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-height: 42vh;
+            margin-bottom: 14px;
+            overflow: hidden;
+        }
+
+        .voting-image-frame img {
+            max-height: 38vh;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        /* Live comment display */
+        .live-comment-display {
+            background-color: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .live-comment-label {
+            font-weight: 700;
+            color: #818cf8;
+            white-space: nowrap;
+        }
+
+        .live-comment-val {
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        /* Rating Scale 1 to 10 */
+        .rating-box {
+            background-color: var(--bg-page);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .rating-header-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .rating-button-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .rating-num-btn {
+            background-color: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            height: 44px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rating-num-btn:hover {
+            transform: translateY(-2px);
+            border-color: #ffffff;
+        }
+
+        .rating-num-btn.rate-d.active { background-color: #06b6d4; color: #ffffff; border-color: #06b6d4; }
+        .rating-num-btn.rate-c.active { background-color: #22c55e; color: #ffffff; border-color: #22c55e; }
+        .rating-num-btn.rate-b.active { background-color: #eab308; color: #000000; border-color: #eab308; }
+        .rating-num-btn.rate-a.active { background-color: #f97316; color: #ffffff; border-color: #f97316; }
+        .rating-num-btn.rate-s.active { background-color: #ef4444; color: #ffffff; border-color: #ef4444; }
+
+        .rating-preview-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            min-height: 20px;
+        }
+
+        .vote-submitted-banner {
+            margin-top: 12px;
+            background-color: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--success);
+            color: var(--success);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ─── Result Modal ─── */
+        .result-modal-card {
+            max-width: 480px;
+            text-align: center;
+            padding: 24px;
+        }
+
+        .result-badge-header {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--success);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .result-image-frame {
+            background-color: #000000;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-height: 200px;
+            margin-bottom: 16px;
+        }
+
+        .result-image-frame img {
+            max-height: 180px;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .result-score-block {
+            margin-bottom: 12px;
+        }
+
+        .result-avg-number {
+            font-size: 38px;
+            font-weight: 900;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .result-avg-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .result-tier-announcement {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+
+        .result-tier-tag {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 4px;
+            font-weight: 800;
+            font-size: 15px;
+            color: #ffffff;
+            margin-left: 6px;
+        }
+
+        .result-comment-box {
+            background-color: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .result-voters-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 14px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 4px;
+        }
+
+        .voter-score-chip {
+            background-color: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 3px 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .voter-score-chip strong {
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -766,8 +1082,8 @@
          MAIN APP CONTAINER
     ═════════════════════════════════════════════ -->
     <main class="container">
-        <!-- Controls Bar -->
-        <div class="action-bar">
+        <!-- Controls Bar (Host only in multiplayer) -->
+        <div class="action-bar" id="host-action-bar">
             <div class="action-group">
                 <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
                 <button class="btn btn-secondary" onclick="document.getElementById('image-upload').click()">
@@ -784,7 +1100,7 @@
             </div>
         </div>
 
-        <!-- Tier List -->
+        <!-- Tier List (Visible to all participants in real time) -->
         <div id="tier-list">
             <!-- Tier S -->
             <div class="tier-row">
@@ -872,19 +1188,29 @@
             </div>
         </div>
 
-        <!-- Image Pool -->
-        <div class="pool-wrapper">
+        <!-- Guest Waiting Banner (Visible to guests when not voting) -->
+        <div id="guest-waiting-card" class="guest-waiting-card" style="display: none;">
+            <div class="waiting-icon">⏳</div>
+            <div class="waiting-title">Waiting for Host to Choose an Image…</div>
+            <div class="waiting-text">The host is selecting an item from their image pool. Once chosen, it will appear here with a 1–10 point rating scale for everyone!</div>
+        </div>
+
+        <!-- Image Pool (Host only in multiplayer) -->
+        <div class="pool-wrapper" id="pool-wrapper">
             <div class="pool-header">
                 <div class="pool-title">
-                    <span>Image Pool</span>
+                    <span>👑 Host Image Pool</span>
                     <span id="pool-count" class="pool-count">0 items</span>
                 </div>
-                <button class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="clearPool()">Clear Pool</button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="document.getElementById('image-upload').click()">+ Add Images</button>
+                    <button class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="clearPool()">Clear Pool</button>
+                </div>
             </div>
             <div id="image-pool" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
                 <div id="pool-empty-hint" class="pool-empty-hint">
                     <span class="hint-icon">🖼️</span>
-                    <span>Drag and drop image files here, or click "Upload Images"</span>
+                    <span>Upload or drag images here. As host, click "▶ Present" on any image to start voting!</span>
                 </div>
             </div>
         </div>
@@ -951,6 +1277,96 @@
         </div>
     </div>
 
+    <!-- ═════════════════════════════════════════════════════════════════════
+         VOTING & RATING MODALS (1-10 Scale, Live Host Comment, Auto-Tier)
+    ═════════════════════════════════════════════ -->
+
+    <!-- Active Voting Modal -->
+    <div id="voting-modal" class="modal-backdrop">
+        <div class="modal-card voting-modal-card">
+            <div class="voting-modal-header">
+                <div class="voting-badge">🔴 LIVE RATING</div>
+                <div class="voting-voter-count">
+                    Voted: <span id="voting-voted-count">0</span> / <span id="voting-total-count">1</span>
+                </div>
+                <button id="force-finish-btn" class="btn btn-secondary" style="display: none; padding: 4px 10px; font-size: 11px;" onclick="forceFinishVoting()" title="Finalize score with votes received so far">⚡ Finalize Early</button>
+            </div>
+
+            <div class="voting-image-frame">
+                <img id="voting-img" src="" alt="Presenting Item">
+            </div>
+
+            <!-- Host Comment Input (Only rendered/editable by host) -->
+            <div id="host-comment-edit-row" style="display: none; margin-bottom: 14px; text-align: left;">
+                <label style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">
+                    Host Commentary / Note (visible to all live):
+                </label>
+                <input id="host-comment-input" class="input-text" style="width: 100%;" type="text" placeholder="Add commentary, prompt, or hint... (broadcasts as you type)" oninput="onHostCommentInput(this.value)">
+            </div>
+
+            <!-- Live Comment Display for All -->
+            <div id="live-comment-box" class="live-comment-display" style="display: none;">
+                <span class="live-comment-label">💬 Host Note:</span>
+                <span id="live-comment-text" class="live-comment-val"></span>
+            </div>
+
+            <!-- Rating 1-10 Controls -->
+            <div class="rating-box">
+                <div class="rating-header-title">Select your rating (1 to 10 points):</div>
+                <div class="rating-button-grid" id="rating-buttons-grid">
+                    <button type="button" class="rating-num-btn rate-d" onclick="selectRatingScore(1)">1</button>
+                    <button type="button" class="rating-num-btn rate-d" onclick="selectRatingScore(2)">2</button>
+                    <button type="button" class="rating-num-btn rate-c" onclick="selectRatingScore(3)">3</button>
+                    <button type="button" class="rating-num-btn rate-c" onclick="selectRatingScore(4)">4</button>
+                    <button type="button" class="rating-num-btn rate-b" onclick="selectRatingScore(5)">5</button>
+                    <button type="button" class="rating-num-btn rate-b" onclick="selectRatingScore(6)">6</button>
+                    <button type="button" class="rating-num-btn rate-a" onclick="selectRatingScore(7)">7</button>
+                    <button type="button" class="rating-num-btn rate-a" onclick="selectRatingScore(8)">8</button>
+                    <button type="button" class="rating-num-btn rate-s" onclick="selectRatingScore(9)">9</button>
+                    <button type="button" class="rating-num-btn rate-s" onclick="selectRatingScore(10)">10</button>
+                </div>
+                <div id="rating-selected-preview" class="rating-preview-text">Choose a number from 1 to 10</div>
+                <div style="display: flex; justify-content: center; margin-top: 12px;">
+                    <button id="submit-rating-btn" class="btn" style="padding: 10px 28px; font-size: 14px;" onclick="submitMyRating()" disabled>
+                        Submit Rating
+                    </button>
+                </div>
+                <div id="vote-submitted-notice" class="vote-submitted-banner" style="display: none;">
+                    ✓ Rating submitted! Waiting for other participants to vote...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Complete / Auto-Tier Placement Modal -->
+    <div id="result-modal" class="modal-backdrop">
+        <div class="modal-card result-modal-card">
+            <div class="result-badge-header">RATING COMPLETE</div>
+            <div class="result-image-frame">
+                <img id="result-img" src="" alt="Rated Item">
+            </div>
+            <div class="result-score-block">
+                <div class="result-avg-number" id="result-avg-score">0.0</div>
+                <div class="result-avg-label">Average Score (out of 10)</div>
+            </div>
+            <div class="result-tier-announcement">
+                Auto-placed in <span id="result-tier-badge" class="result-tier-tag">Tier S</span>
+            </div>
+            <div id="result-comment-box" class="result-comment-box" style="display: none;">
+                💬 <span id="result-comment-text"></span>
+            </div>
+            <div class="result-voters-list" id="result-voters-breakdown"></div>
+            <div class="modal-actions" style="justify-content: center; margin-top: 20px;">
+                <button id="result-next-btn" class="btn" onclick="requestNextImage()" style="display: none; padding: 10px 24px;">
+                    Choose Next Image →
+                </button>
+                <div id="result-guest-waiting" style="display: none; color: var(--text-secondary); font-size: 13px;">
+                    Waiting for host to select the next image…
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast -->
     <div id="toast"></div>
 
@@ -964,10 +1380,15 @@
         let socket = null;
         let myName = '';
         let myRoom = null;
+        let isHost = true;
         let isApplyingState = false;
         let syncDebounceTimer = null;
         let networkInfo = { primaryIp: window.location.hostname || 'localhost', port: 3000, inviteBaseUrl: '' };
 
+        // Voting state
+        let currentVotingSrc = null;
+        let mySelectedRating = null;
+        let hasSubmittedVote = false;
 
         // Full Image Lightbox
         function openLightbox(src) {
@@ -1036,6 +1457,43 @@
         }
 
         // ═══════════════════════════════════════════════════════════════════
+        //  ROLE MANAGEMENT (HOST VS GUEST)
+        // ═══════════════════════════════════════════════════════════════════
+        function updateRoleUI() {
+            const poolWrapper = document.getElementById('pool-wrapper');
+            const guestWaiting = document.getElementById('guest-waiting-card');
+            const hostActionBar = document.getElementById('host-action-bar');
+            const forceFinishBtn = document.getElementById('force-finish-btn');
+            const hostCommentEdit = document.getElementById('host-comment-edit-row');
+
+            if (myRoom) {
+                if (isHost) {
+                    poolWrapper.style.display = 'block';
+                    guestWaiting.style.display = 'none';
+                    hostActionBar.style.display = 'flex';
+                    if (forceFinishBtn) forceFinishBtn.style.display = 'inline-flex';
+                    if (hostCommentEdit) hostCommentEdit.style.display = 'block';
+                } else {
+                    poolWrapper.style.display = 'none';
+                    const isVotingActive = document.getElementById('voting-modal').classList.contains('show') ||
+                                           document.getElementById('result-modal').classList.contains('show');
+                    guestWaiting.style.display = isVotingActive ? 'none' : 'block';
+                    hostActionBar.style.display = 'none';
+                    if (forceFinishBtn) forceFinishBtn.style.display = 'none';
+                    if (hostCommentEdit) hostCommentEdit.style.display = 'none';
+                }
+            } else {
+                // Solo / offline mode: show all tools
+                isHost = true;
+                poolWrapper.style.display = 'block';
+                guestWaiting.style.display = 'none';
+                hostActionBar.style.display = 'flex';
+                if (forceFinishBtn) forceFinishBtn.style.display = 'none';
+                if (hostCommentEdit) hostCommentEdit.style.display = 'none';
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
         //  SOCKET.IO LISTENERS & ROOM LOGIC
         // ═══════════════════════════════════════════════════════════════════
         function initSocketListeners() {
@@ -1061,13 +1519,39 @@
                 showToast(`🚪 ${name} left the room`, 'info', 2000);
             });
 
-            socket.on('stateSync', ({ state, from }) => {
+            socket.on('stateSync', ({ state }) => {
                 applyFullState(state);
-                showToast(`🔄 Synced update from ${from || 'teammate'}`, 'info', 1500);
+                showToast(`🔄 Tier list synchronized`, 'info', 1200);
             });
 
             socket.on('youAreHost', () => {
-                showToast('👑 You are now the room host!', 'success', 3000);
+                isHost = true;
+                updateRoleUI();
+                showToast('👑 You are now the room host!', 'success', 3500);
+            });
+
+            // ── Live Voting Handlers ──
+            socket.on('imagePresented', (data) => {
+                handleImagePresented(data);
+            });
+
+            socket.on('commentUpdated', ({ comment }) => {
+                handleCommentUpdated(comment);
+            });
+
+            socket.on('votingProgress', ({ voted, total }) => {
+                document.getElementById('voting-voted-count').textContent = voted;
+                document.getElementById('voting-total-count').textContent = total;
+            });
+
+            socket.on('votingComplete', (result) => {
+                handleVotingComplete(result);
+            });
+
+            socket.on('waitingForNext', () => {
+                document.getElementById('result-modal').classList.remove('show');
+                document.getElementById('voting-modal').classList.remove('show');
+                updateRoleUI();
             });
         }
 
@@ -1095,9 +1579,10 @@
                     return;
                 }
                 myRoom = res.code;
+                isHost = true;
                 closeCreateModal();
                 activateRoomUI(res.code, res.users);
-                showToast(`Room ${res.code} created! Click "Share / Invite" to invite others.`, 'success', 4000);
+                showToast(`Room ${res.code} created! You are the host.`, 'success', 4000);
             });
         }
 
@@ -1122,14 +1607,16 @@
                     return;
                 }
                 myRoom = res.code;
+                isHost = !!res.isHost;
                 activateRoomUI(res.code, res.users);
 
                 if (res.state) {
                     applyFullState(res.state);
-                    showToast(`Joined room ${res.code} — synchronized!`, 'success');
-                } else {
-                    showToast(`Joined room ${res.code}`, 'success');
                 }
+                if (res.voting) {
+                    handleImagePresented(res.voting);
+                }
+                showToast(`Joined room ${res.code}`, 'success');
             });
         }
 
@@ -1147,27 +1634,36 @@
             document.getElementById('room-info').style.display = 'flex';
             document.getElementById('active-code').textContent = code;
             updateUsersList(users);
+            updateRoleUI();
             setSyncStatus('connected');
         }
 
         function deactivateRoomUI() {
+            isHost = true;
             document.getElementById('lobby-controls').style.display = 'flex';
             document.getElementById('room-info').style.display = 'none';
             document.getElementById('join-code-input').value = '';
+            document.getElementById('voting-modal').classList.remove('show');
+            document.getElementById('result-modal').classList.remove('show');
+            updateRoleUI();
             setSyncStatus('offline');
         }
 
         function updateUsersList(users) {
             const list = document.getElementById('users-list');
             list.innerHTML = '';
-            (users || []).forEach((u, i) => {
+            (users || []).forEach((u) => {
                 const chip = document.createElement('div');
                 const isSelf = u.name === myName;
-                const isHost = i === 0;
-                chip.className = `user-chip ${isSelf ? 'self' : ''} ${isHost ? 'host-chip' : ''}`;
-                chip.innerHTML = `<div class="dot"></div>${u.name}${isHost ? ' 👑' : ''}${isSelf ? ' (you)' : ''}`;
+                const isHostUser = !!u.isHost;
+                if (isSelf) {
+                    isHost = isHostUser;
+                }
+                chip.className = `user-chip ${isSelf ? 'self' : ''} ${isHostUser ? 'host-chip' : ''}`;
+                chip.innerHTML = `<div class="dot"></div>${u.name}${isHostUser ? ' 👑' : ''}${isSelf ? ' (you)' : ''}`;
                 list.appendChild(chip);
             });
+            updateRoleUI();
         }
 
         // ── Share Modal & QR Code ──
@@ -1219,7 +1715,161 @@
                 document.getElementById('join-name-input').focus();
             }
             updatePoolHint();
+            updateRoleUI();
         });
+
+        // ═══════════════════════════════════════════════════════════════════
+        //  VOTING & RATING WORKFLOW (1-10 Scale, Auto-Tier Placement)
+        // ═══════════════════════════════════════════════════════════════════
+        function startPresentImage(src) {
+            if (!socket || !myRoom) {
+                showToast('Create or join a room first to present items for voting', 'error');
+                return;
+            }
+            if (!isHost) {
+                showToast('Only the host can present images', 'error');
+                return;
+            }
+            currentVotingSrc = src;
+            socket.emit('presentImage', { src, comment: '' });
+        }
+
+        function handleImagePresented(data) {
+            currentVotingSrc = data.src || data.imageSrc;
+            mySelectedRating = null;
+            hasSubmittedVote = false;
+
+            document.getElementById('result-modal').classList.remove('show');
+
+            document.getElementById('voting-img').src = currentVotingSrc;
+            document.getElementById('voting-voted-count').textContent = data.voted || 0;
+            document.getElementById('voting-total-count').textContent = data.total || 1;
+
+            // Host comment input
+            const commentInput = document.getElementById('host-comment-input');
+            if (commentInput) commentInput.value = data.comment || '';
+
+            handleCommentUpdated(data.comment);
+
+            // Reset rating buttons
+            document.querySelectorAll('#rating-buttons-grid .rating-num-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('rating-selected-preview').textContent = 'Choose a number from 1 to 10';
+            const submitBtn = document.getElementById('submit-rating-btn');
+            submitBtn.disabled = true;
+            submitBtn.style.display = 'inline-flex';
+            document.getElementById('vote-submitted-notice').style.display = 'none';
+
+            document.getElementById('voting-modal').classList.add('show');
+            updateRoleUI();
+        }
+
+        function onHostCommentInput(val) {
+            if (!socket || !myRoom || !isHost) return;
+            socket.emit('updateComment', { comment: val });
+        }
+
+        function handleCommentUpdated(comment) {
+            const commentBox = document.getElementById('live-comment-box');
+            const commentText = document.getElementById('live-comment-text');
+            if (comment && comment.trim()) {
+                commentText.textContent = comment;
+                commentBox.style.display = 'flex';
+            } else {
+                commentBox.style.display = 'none';
+            }
+        }
+
+        function selectRatingScore(score) {
+            if (hasSubmittedVote) return;
+            mySelectedRating = score;
+
+            document.querySelectorAll('#rating-buttons-grid .rating-num-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.textContent) === score) {
+                    btn.classList.add('active');
+                }
+            });
+
+            let tierHint = 'D';
+            if (score >= 9) tierHint = 'S';
+            else if (score >= 7) tierHint = 'A';
+            else if (score >= 5) tierHint = 'B';
+            else if (score >= 3) tierHint = 'C';
+
+            document.getElementById('rating-selected-preview').innerHTML = `Selected score: <strong>${score} / 10</strong> (Tier ${tierHint})`;
+            document.getElementById('submit-rating-btn').disabled = false;
+        }
+
+        function submitMyRating() {
+            if (mySelectedRating === null || hasSubmittedVote) return;
+            hasSubmittedVote = true;
+
+            document.getElementById('submit-rating-btn').disabled = true;
+            document.getElementById('submit-rating-btn').style.display = 'none';
+            document.getElementById('vote-submitted-notice').style.display = 'block';
+
+            if (socket && myRoom) {
+                socket.emit('submitRating', { rating: mySelectedRating });
+            }
+        }
+
+        function forceFinishVoting() {
+            if (socket && myRoom && isHost) {
+                socket.emit('forceComplete');
+            }
+        }
+
+        function handleVotingComplete(result) {
+            document.getElementById('voting-modal').classList.remove('show');
+
+            document.getElementById('result-img').src = result.src;
+            document.getElementById('result-avg-score').textContent = Number(result.avg).toFixed(1);
+
+            const tierBadge = document.getElementById('result-tier-badge');
+            tierBadge.textContent = `Tier ${result.tier}`;
+            const colors = { 'S': '#ef4444', 'A': '#f97316', 'B': '#eab308', 'C': '#22c55e', 'D': '#06b6d4' };
+            tierBadge.style.backgroundColor = colors[result.tier] || '#6366f1';
+
+            const commentBox = document.getElementById('result-comment-box');
+            const commentText = document.getElementById('result-comment-text');
+            if (result.comment && result.comment.trim()) {
+                commentText.textContent = result.comment;
+                commentBox.style.display = 'block';
+            } else {
+                commentBox.style.display = 'none';
+            }
+
+            const list = document.getElementById('result-voters-breakdown');
+            list.innerHTML = '';
+            if (result.ratings) {
+                Object.entries(result.ratings).forEach(([name, score]) => {
+                    const chip = document.createElement('div');
+                    chip.className = 'voter-score-chip';
+                    chip.innerHTML = `${name}: <strong>${score}/10</strong>`;
+                    list.appendChild(chip);
+                });
+            }
+
+            const nextBtn = document.getElementById('result-next-btn');
+            const guestWait = document.getElementById('result-guest-waiting');
+            if (isHost) {
+                nextBtn.style.display = 'inline-flex';
+                guestWait.style.display = 'none';
+            } else {
+                nextBtn.style.display = 'none';
+                guestWait.style.display = 'block';
+            }
+
+            document.getElementById('result-modal').classList.add('show');
+            showToast(`🏆 Rated ${result.avg}/10 → Placed into Tier ${result.tier}!`, 'success', 3500);
+            updateRoleUI();
+        }
+
+        function requestNextImage() {
+            if (socket && myRoom && isHost) {
+                socket.emit('nextImage');
+            }
+        }
 
         // ═══════════════════════════════════════════════════════════════════
         //  STATE SERIALIZATION & BROADCAST
@@ -1281,7 +1931,7 @@
                     content.setAttribute('ondragleave', 'handleDragLeave(event)');
 
                     (t.images || []).forEach(imgData => {
-                        const card = createImageCard(imgData.src);
+                        const card = createImageCard(imgData.src, false);
                         content.appendChild(card);
                     });
 
@@ -1299,11 +1949,12 @@
                 const pool = document.getElementById('image-pool');
                 pool.querySelectorAll('.image-container').forEach(c => c.remove());
                 (state.pool || []).forEach(imgData => {
-                    const card = createImageCard(imgData.src);
+                    const card = createImageCard(imgData.src, true);
                     pool.appendChild(card);
                 });
 
                 updatePoolHint();
+                updateRoleUI();
             } finally {
                 isApplyingState = false;
             }
@@ -1334,7 +1985,20 @@
             }
         }
 
-        function createImageCard(src) {
+        function attachPresentButton(container, src) {
+            if (container.querySelector('.present-image-btn')) return;
+            const presentBtn = document.createElement('button');
+            presentBtn.className = 'present-image-btn';
+            presentBtn.innerHTML = '▶ Present';
+            presentBtn.title = 'Present this image to all players for 1–10 rating';
+            presentBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                startPresentImage(src);
+            });
+            container.appendChild(presentBtn);
+        }
+
+        function createImageCard(src, inPool = false) {
             const container = document.createElement('div');
             container.className = 'image-container';
             container.draggable = true;
@@ -1366,6 +2030,11 @@
 
             container.appendChild(img);
             container.appendChild(removeBtn);
+
+            if (inPool) {
+                attachPresentButton(container, src);
+            }
+
             return container;
         }
 
@@ -1379,6 +2048,7 @@
         function handleFileSelection(files, targetElement) {
             if (!files || files.length === 0) return;
             const target = targetElement || document.getElementById('image-pool');
+            const inPool = !target.classList.contains('tier-content');
 
             let processed = 0;
             const total = Array.from(files).filter(f => f.type.startsWith('image/')).length;
@@ -1388,7 +2058,7 @@
                 if (!file.type.startsWith('image/')) return;
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const card = createImageCard(e.target.result);
+                    const card = createImageCard(e.target.result, inPool);
                     if (target.classList.contains('tier-content')) {
                         const actions = target.querySelector('.tier-actions');
                         if (actions) target.insertBefore(card, actions);
@@ -1441,6 +2111,8 @@
             const pool = document.getElementById('image-pool');
 
             images.forEach(card => {
+                const img = card.querySelector('img');
+                if (img) attachPresentButton(card, img.src);
                 pool.appendChild(card);
             });
 
@@ -1456,6 +2128,8 @@
             const pool = document.getElementById('image-pool');
 
             images.forEach(card => {
+                const img = card.querySelector('img');
+                if (img) attachPresentButton(card, img.src);
                 pool.appendChild(card);
             });
 
@@ -1610,6 +2284,15 @@
             // 2. Check if user dragged an existing image card
             const dragged = activeDraggedCard || document.querySelector('.image-container.dragging');
             if (!dragged) return;
+
+            const isDroppingInPool = dropTarget.id === 'image-pool' || dropTarget.closest('#image-pool');
+            if (isDroppingInPool) {
+                const img = dragged.querySelector('img');
+                if (img) attachPresentButton(dragged, img.src);
+            } else {
+                const pBtn = dragged.querySelector('.present-image-btn');
+                if (pBtn) pBtn.remove();
+            }
 
             // Check if dropped directly onto or before another image card in the target
             const targetCard = e.target.closest('.image-container');
