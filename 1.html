@@ -1678,7 +1678,7 @@
             list.innerHTML = '';
             (users || []).forEach((u) => {
                 const chip = document.createElement('div');
-                const isSelf = u.name === myName;
+                const isSelf = socket && u.id === socket.id;
                 const isHostUser = !!u.isHost;
                 if (isSelf) {
                     isHost = isHostUser;
@@ -1874,6 +1874,28 @@
                 });
             }
 
+            // Immediately place image into appropriate tier row without destroying DOM
+            const tierNames = ['S', 'A', 'B', 'C', 'D'];
+            const tierIndex = tierNames.indexOf(result.tier);
+            const rows = document.querySelectorAll('#tier-list .tier-row');
+            if (rows[tierIndex]) {
+                const content = rows[tierIndex].querySelector('.tier-content');
+                const actions = content ? content.querySelector('.tier-actions') : null;
+                const alreadyPresent = Array.from(content.querySelectorAll('.image-container img')).some(img => img.src === result.src);
+                if (!alreadyPresent) {
+                    const card = createImageCard(result.src, false);
+                    if (actions) content.insertBefore(card, actions);
+                    else content.appendChild(card);
+                }
+            }
+
+            // Remove from pool if present
+            document.querySelectorAll('#image-pool .image-container').forEach(c => {
+                const img = c.querySelector('img');
+                if (img && img.src === result.src) c.remove();
+            });
+            updatePoolHint();
+
             const nextBtn = document.getElementById('result-next-btn');
             const guestWait = document.getElementById('result-guest-waiting');
             if (isHost) {
@@ -1896,8 +1918,38 @@
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        //  STATE SERIALIZATION & BROADCAST
+        //  STATE SERIALIZATION & NON-DESTRUCTIVE RECONCILIATION
         // ═══════════════════════════════════════════════════════════════════
+        function createTierRow(t) {
+            const row = document.createElement('div');
+            row.className = 'tier-row';
+            const bg = t.bg || '#6366f1';
+            const textColor = t.textColor || '#ffffff';
+            const label = t.label || 'New';
+
+            row.innerHTML = `
+                <div class="tier-label" onclick="makeEditable(this)" style="background-color: ${bg};">
+                    <button class="delete-tier" onclick="deleteTier(this)" title="Delete Tier">×</button>
+                    <div class="color-controls">
+                        <input type="color" class="color-picker bg-color" value="${bg}" onchange="changeBackgroundColor(this)" title="Tier Color">
+                        <input type="color" class="color-picker text-color" value="${textColor}" onchange="changeTextColor(this)" title="Text Color">
+                    </div>
+                    <span style="color:${textColor}">${label}</span>
+                </div>
+                <div class="tier-content" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="tier-actions">
+                        <button class="clear-tier-btn" onclick="clearTier(this)">Clear All</button>
+                    </div>
+                </div>
+            `;
+            const content = row.querySelector('.tier-content');
+            const actions = row.querySelector('.tier-actions');
+            (t.images || []).forEach(imgData => {
+                content.insertBefore(createImageCard(imgData.src, false), actions);
+            });
+            return row;
+        }
+
         function getFullState() {
             const tiers = [];
             document.querySelectorAll('#tier-list .tier-row').forEach(row => {
@@ -1928,54 +1980,58 @@
             isApplyingState = true;
 
             try {
-                // Reconstruct tiers
                 const tierList = document.getElementById('tier-list');
-                tierList.innerHTML = '';
-                (state.tiers || []).forEach(t => {
-                    const row = document.createElement('div');
-                    row.className = 'tier-row';
+                const existingRows = tierList.querySelectorAll('.tier-row');
+                const newTiers = state.tiers || [];
 
-                    const label = document.createElement('div');
-                    label.className = 'tier-label';
-                    label.setAttribute('onclick', 'makeEditable(this)');
-                    label.style.backgroundColor = t.bg || '#333333';
-                    label.innerHTML = `
-                        <button class="delete-tier" onclick="deleteTier(this)" title="Delete Tier">×</button>
-                        <div class="color-controls">
-                            <input type="color" class="color-picker bg-color" value="${t.bg || '#333333'}" onchange="changeBackgroundColor(this)" title="Tier Color">
-                            <input type="color" class="color-picker text-color" value="${t.textColor || '#ffffff'}" onchange="changeTextColor(this)" title="Text Color">
-                        </div>
-                        <span style="color:${t.textColor || '#ffffff'}">${t.label}</span>
-                    `;
-
-                    const content = document.createElement('div');
-                    content.className = 'tier-content';
-                    content.setAttribute('ondrop', 'handleDrop(event)');
-                    content.setAttribute('ondragover', 'handleDragOver(event)');
-                    content.setAttribute('ondragleave', 'handleDragLeave(event)');
-
-                    (t.images || []).forEach(imgData => {
-                        const card = createImageCard(imgData.src, false);
-                        content.appendChild(card);
+                // If number of tiers changed, rebuild structure
+                if (existingRows.length !== newTiers.length) {
+                    tierList.innerHTML = '';
+                    newTiers.forEach(t => tierList.appendChild(createTierRow(t)));
+                } else {
+                    // Update rows in place without destroying DOM nodes
+                    existingRows.forEach((row, i) => {
+                        const t = newTiers[i];
+                        if (!t) return;
+                        const labelEl = row.querySelector('.tier-label');
+                        const span = labelEl ? labelEl.querySelector('span') : null;
+                        if (labelEl && labelEl.style.backgroundColor !== t.bg) {
+                            labelEl.style.backgroundColor = t.bg || '#333333';
+                        }
+                        if (span) {
+                            if (span.textContent !== t.label) span.textContent = t.label;
+                            if (span.style.color !== t.textColor) span.style.color = t.textColor || '#ffffff';
+                        }
+                        // Reconcile images in tier-content
+                        const content = row.querySelector('.tier-content');
+                        if (content) {
+                            const currentImgs = Array.from(content.querySelectorAll('.image-container img')).map(img => img.src);
+                            const targetImgs = (t.images || []).map(img => img.src);
+                            if (JSON.stringify(currentImgs) !== JSON.stringify(targetImgs)) {
+                                content.querySelectorAll('.image-container').forEach(c => c.remove());
+                                const actions = content.querySelector('.tier-actions');
+                                (t.images || []).forEach(imgData => {
+                                    const card = createImageCard(imgData.src, false);
+                                    if (actions) content.insertBefore(card, actions);
+                                    else content.appendChild(card);
+                                });
+                            }
+                        }
                     });
+                }
 
-                    const actions = document.createElement('div');
-                    actions.className = 'tier-actions';
-                    actions.innerHTML = `<button class="clear-tier-btn" onclick="clearTier(this)">Clear All</button>`;
-                    content.appendChild(actions);
-
-                    row.appendChild(label);
-                    row.appendChild(content);
-                    tierList.appendChild(row);
-                });
-
-                // Reconstruct pool
-                const pool = document.getElementById('image-pool');
-                pool.querySelectorAll('.image-container').forEach(c => c.remove());
-                (state.pool || []).forEach(imgData => {
-                    const card = createImageCard(imgData.src, true);
-                    pool.appendChild(card);
-                });
+                // Reconcile host's pool only if provided and host is active
+                if (isHost && state.pool) {
+                    const pool = document.getElementById('image-pool');
+                    const currentPoolImgs = Array.from(pool.querySelectorAll('.image-container img')).map(img => img.src);
+                    const targetPoolImgs = state.pool.map(img => img.src);
+                    if (JSON.stringify(currentPoolImgs) !== JSON.stringify(targetPoolImgs)) {
+                        pool.querySelectorAll('.image-container').forEach(c => c.remove());
+                        state.pool.forEach(imgData => {
+                            pool.appendChild(createImageCard(imgData.src, true));
+                        });
+                    }
+                }
 
                 updatePoolHint();
                 updateRoleUI();
@@ -2064,6 +2120,33 @@
             return container;
         }
 
+        // ── Fast Client-Side Image Compression (Canvas) ──
+        function compressImageFile(file, maxDim = 720, quality = 0.82) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let w = img.width, h = img.height;
+                        if (w > maxDim || h > maxDim) {
+                            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w;
+                        canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = () => resolve(e.target.result);
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => resolve(null);
+                reader.readAsDataURL(file);
+            });
+        }
+
         // ── Upload via File Input ──
         const imageUpload = document.getElementById('image-upload');
         imageUpload.addEventListener('change', (e) => {
@@ -2071,35 +2154,27 @@
             e.target.value = '';
         });
 
-        function handleFileSelection(files, targetElement) {
+        async function handleFileSelection(files, targetElement) {
             if (!files || files.length === 0) return;
             const target = targetElement || document.getElementById('image-pool');
             const inPool = !target.classList.contains('tier-content');
+            const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+            if (imageFiles.length === 0) return;
 
-            let processed = 0;
-            const total = Array.from(files).filter(f => f.type.startsWith('image/')).length;
-            if (total === 0) return;
-
-            Array.from(files).forEach(file => {
-                if (!file.type.startsWith('image/')) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const card = createImageCard(e.target.result, inPool);
-                    if (target.classList.contains('tier-content')) {
-                        const actions = target.querySelector('.tier-actions');
-                        if (actions) target.insertBefore(card, actions);
-                        else target.appendChild(card);
-                    } else {
-                        target.appendChild(card);
-                    }
-                    processed++;
-                    updatePoolHint();
-                    if (processed === total) {
-                        broadcastState();
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
+            for (const file of imageFiles) {
+                const dataUrl = await compressImageFile(file);
+                if (!dataUrl) continue;
+                const card = createImageCard(dataUrl, inPool);
+                if (target.classList.contains('tier-content')) {
+                    const actions = target.querySelector('.tier-actions');
+                    if (actions) target.insertBefore(card, actions);
+                    else target.appendChild(card);
+                } else {
+                    target.appendChild(card);
+                }
+            }
+            updatePoolHint();
+            broadcastState();
         }
 
         // ── Paste from Clipboard (Ctrl+V) ──
@@ -2170,25 +2245,9 @@
 
         // ── Add Tier ──
         function addTier() {
+            if (!isHost) return;
             const tierList = document.getElementById('tier-list');
-            const newTier = document.createElement('div');
-            newTier.className = 'tier-row';
-            newTier.innerHTML = `
-                <div class="tier-label" onclick="makeEditable(this)" style="background-color: #6366f1;">
-                    <button class="delete-tier" onclick="deleteTier(this)" title="Delete Tier">×</button>
-                    <div class="color-controls">
-                        <input type="color" class="color-picker bg-color" value="#6366f1" onchange="changeBackgroundColor(this)" title="Tier Color">
-                        <input type="color" class="color-picker text-color" value="#ffffff" onchange="changeTextColor(this)" title="Text Color">
-                    </div>
-                    <span>New</span>
-                </div>
-                <div class="tier-content" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-                    <div class="tier-actions">
-                        <button class="clear-tier-btn" onclick="clearTier(this)">Clear All</button>
-                    </div>
-                </div>
-            `;
-            tierList.appendChild(newTier);
+            tierList.appendChild(createTierRow({ label: 'New', bg: '#6366f1', textColor: '#ffffff', images: [] }));
             broadcastState();
         }
 
@@ -2279,10 +2338,16 @@
             e.dataTransfer.setData('text/plain', 'image-card');
         }
 
+        let lastDragOverEl = null;
+
         function handleDragEnd() {
             if (activeDraggedCard) {
                 activeDraggedCard.classList.remove('dragging');
                 activeDraggedCard = null;
+            }
+            if (lastDragOverEl) {
+                lastDragOverEl.classList.remove('drag-over');
+                lastDragOverEl = null;
             }
             document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
         }
@@ -2291,8 +2356,10 @@
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
             const dropTarget = e.target.closest('.tier-content') || e.target.closest('#image-pool');
-            if (dropTarget) {
+            if (dropTarget && dropTarget !== lastDragOverEl) {
+                if (lastDragOverEl) lastDragOverEl.classList.remove('drag-over');
                 dropTarget.classList.add('drag-over');
+                lastDragOverEl = dropTarget;
             }
         }
 
@@ -2300,6 +2367,7 @@
             const dropTarget = e.target.closest('.tier-content') || e.target.closest('#image-pool');
             if (dropTarget && !dropTarget.contains(e.relatedTarget)) {
                 dropTarget.classList.remove('drag-over');
+                if (lastDragOverEl === dropTarget) lastDragOverEl = null;
             }
         }
 
@@ -2310,6 +2378,10 @@
             if (!dropTarget) return;
 
             dropTarget.classList.remove('drag-over');
+            if (lastDragOverEl) {
+                lastDragOverEl.classList.remove('drag-over');
+                lastDragOverEl = null;
+            }
 
             // 1. Check if user dropped native files from computer
             if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {

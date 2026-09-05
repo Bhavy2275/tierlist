@@ -8,7 +8,7 @@ const QRCode = require('qrcode');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  maxHttpBufferSize: 50e6,
+  maxHttpBufferSize: 10e6,
   cors: { origin: '*', methods: ['GET', 'POST'] }
 });
 
@@ -115,12 +115,13 @@ io.on('connection', (socket) => {
     socket.to(code).emit('userJoined', { id: socket.id, name: socket.userName });
     io.to(code).emit('roomUsers', userList(room));
 
+    const isHost = (socket.id === room.host);
     const v = room.voting;
     cb({
       success: true, code,
-      isHost: (socket.id === room.host),
+      isHost,
       users: userList(room),
-      state: room.state,
+      state: isHost ? room.state : { tiers: room.state?.tiers || [] },
       // If a vote is currently active, give the joiner enough to join it
       voting: v && v.active ? {
         imageSrc: v.imageSrc,
@@ -141,7 +142,8 @@ io.on('connection', (socket) => {
       return;
     }
     rooms[code].state = state;
-    socket.to(code).emit('stateSync', { state });
+    // Guests only need the tier list, not the host's private image pool
+    socket.to(code).emit('stateSync', { state: { tiers: state.tiers } });
   });
 
   // ── Present Image (host only) ─────────────────────────────────────────────
@@ -220,8 +222,8 @@ io.on('connection', (socket) => {
     }
 
     io.to(code).emit('votingComplete', result);
-    // Broadcast updated tier state so everyone's list is in sync
-    io.to(code).emit('stateSync', { state: room.state });
+    // Broadcast updated tier state so everyone's list is in sync (tiers only)
+    io.to(code).emit('stateSync', { state: { tiers: room.state.tiers } });
     console.log(`[VOTE] Done in ${code}: avg=${avgR} → Tier ${tier}`);
   }
 
