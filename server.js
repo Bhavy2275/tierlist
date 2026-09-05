@@ -132,10 +132,14 @@ io.on('connection', (socket) => {
     console.log(`[ROOM] ${name} joined ${code}`);
   });
 
-  // ── Sync State ────────────────────────────────────────────────────────────
+  // ── Sync State (host only) ────────────────────────────────────────────────
   socket.on('syncState', ({ state }) => {
     const code = socket.roomCode;
     if (!code || !rooms[code]) return;
+    if (rooms[code].host !== socket.id) {
+      console.warn(`[DENIED] Non-host ${socket.id} attempted to syncState in room ${code}`);
+      return;
+    }
     rooms[code].state = state;
     socket.to(code).emit('stateSync', { state });
   });

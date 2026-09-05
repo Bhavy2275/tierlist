@@ -1029,6 +1029,25 @@
         .voter-score-chip strong {
             color: #ffffff;
         }
+
+        /* ─── Guest Mode: Hide all host-only editing controls ─── */
+        body.guest-mode .delete-tier,
+        body.guest-mode .color-controls,
+        body.guest-mode .clear-tier-btn,
+        body.guest-mode .remove-image-btn {
+            display: none !important;
+        }
+        body.guest-mode .tier-label {
+            cursor: default;
+            pointer-events: none;
+        }
+        body.guest-mode .tier-content {
+            /* prevent visual drop hint on guest hover */
+            pointer-events: none;
+        }
+        body.guest-mode #image-pool {
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -1468,12 +1487,14 @@
 
             if (myRoom) {
                 if (isHost) {
+                    document.body.classList.remove('guest-mode');
                     poolWrapper.style.display = 'block';
                     guestWaiting.style.display = 'none';
                     hostActionBar.style.display = 'flex';
                     if (forceFinishBtn) forceFinishBtn.style.display = 'inline-flex';
                     if (hostCommentEdit) hostCommentEdit.style.display = 'block';
                 } else {
+                    document.body.classList.add('guest-mode');
                     poolWrapper.style.display = 'none';
                     const isVotingActive = document.getElementById('voting-modal').classList.contains('show') ||
                                            document.getElementById('result-modal').classList.contains('show');
@@ -1484,6 +1505,7 @@
                 }
             } else {
                 // Solo / offline mode: show all tools
+                document.body.classList.remove('guest-mode');
                 isHost = true;
                 poolWrapper.style.display = 'block';
                 guestWaiting.style.display = 'none';
@@ -1520,8 +1542,10 @@
             });
 
             socket.on('stateSync', ({ state }) => {
+                // Host skip: server echoes stateSync to all including sender.
+                // Host's local DOM is already up-to-date; re-applying would stutter.
+                if (isHost) return;
                 applyFullState(state);
-                showToast(`🔄 Tier list synchronized`, 'info', 1200);
             });
 
             socket.on('youAreHost', () => {
@@ -2001,7 +2025,7 @@
         function createImageCard(src, inPool = false) {
             const container = document.createElement('div');
             container.className = 'image-container';
-            container.draggable = true;
+            container.draggable = isHost;
             container.title = 'Drag to move • Double-click to preview';
 
             const img = document.createElement('img');
@@ -2012,7 +2036,9 @@
             removeBtn.className = 'remove-image-btn';
             removeBtn.innerHTML = '×';
             removeBtn.title = 'Remove Image';
+            if (!isHost) removeBtn.style.display = 'none';
             removeBtn.addEventListener('click', (e) => {
+                if (!isHost) return;
                 e.stopPropagation();
                 container.remove();
                 updatePoolHint();
@@ -2078,6 +2104,7 @@
 
         // ── Paste from Clipboard (Ctrl+V) ──
         window.addEventListener('paste', (e) => {
+            if (!isHost) return;
             const items = e.clipboardData ? e.clipboardData.items : null;
             if (!items) return;
             const files = [];
@@ -2095,6 +2122,7 @@
 
         // ── Clear Pool ──
         function clearPool() {
+            if (!isHost) return;
             const pool = document.getElementById('image-pool');
             const items = pool.querySelectorAll('.image-container');
             if (items.length === 0) return;
@@ -2106,6 +2134,7 @@
 
         // ── Clear Tier ──
         function clearTier(btn) {
+            if (!isHost) return;
             const tierContent = btn.closest('.tier-content');
             const images = tierContent.querySelectorAll('.image-container');
             const pool = document.getElementById('image-pool');
@@ -2123,6 +2152,7 @@
 
         // ── Delete Tier ──
         function deleteTier(btn) {
+            if (!isHost) return;
             const tierRow = btn.closest('.tier-row');
             const images = tierRow.querySelectorAll('.image-container');
             const pool = document.getElementById('image-pool');
@@ -2164,6 +2194,7 @@
 
         // ── Reset All Confirm ──
         function resetTierListConfirm() {
+            if (!isHost) return;
             if (!confirm('Are you sure you want to reset the tier list? All tiers and images will be restored to default.')) return;
             const pool = document.getElementById('image-pool');
             pool.querySelectorAll('.image-container').forEach(c => c.remove());
@@ -2175,12 +2206,14 @@
 
         // ── Tier Color & Label Editing ──
         function changeBackgroundColor(input) {
+            if (!isHost) return;
             const label = input.closest('.tier-label');
             label.style.backgroundColor = input.value;
             broadcastState();
         }
 
         function changeTextColor(input) {
+            if (!isHost) return;
             const label = input.closest('.tier-label');
             const span = label.querySelector('span');
             if (span) span.style.color = input.value;
@@ -2188,6 +2221,7 @@
         }
 
         function makeEditable(element) {
+            if (!isHost) return;
             if (event && event.target && (event.target.type === 'color' || event.target.classList.contains('delete-tier'))) return;
 
             const span = element.querySelector('span');
@@ -2238,6 +2272,7 @@
         let activeDraggedCard = null;
 
         function handleDragStart(e) {
+            if (!isHost) { e.preventDefault(); return; }
             activeDraggedCard = this;
             this.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
@@ -2270,6 +2305,7 @@
 
         function handleDrop(e) {
             e.preventDefault();
+            if (!isHost) return;
             const dropTarget = e.target.closest('.tier-content') || e.target.closest('#image-pool');
             if (!dropTarget) return;
 
